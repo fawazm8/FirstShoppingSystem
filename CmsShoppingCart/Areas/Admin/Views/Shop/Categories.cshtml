@@ -1,0 +1,240 @@
+﻿@model IEnumerable<FirstShopping.Models.ViewModels.Shop.CategoryVM>
+
+@{
+    ViewBag.Title = "ادارة المجموعات";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>نموذج ادارة المجموعات</h2>
+<div class="new-cat">
+    <table class="table table">
+        <tr>
+            <td width="200">اسم المجموعة بالعربي </td>
+            <td><input type="text" id="newcatname" /></td>
+        </tr>
+        <tr>
+            <td>اسم المجموعة بالانجليزي</td>
+            <td><input type="text" id="newEnName" /></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <a href="#" id="newcat" class="btn btn-success">اضافة مجموعة جديدة </a>
+                <span class="ajax-text">
+                    <img src="~/Content/img/ajax-loader.gif" />
+                </span>
+            </td>
+
+        </tr>
+    </table>
+
+</div>
+
+<table class="table" id="category">
+    <tr class="home">
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryArName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryEnName)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr id="id_@item.Id">
+            <td>
+                <div class="ajaxdivtd"></div>
+                @Html.EditorFor(model => item.CategoryArName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @id = "ArName" } })
+            </td>
+            <td>
+                <div class="ajaxdivtd"></div>
+                @Html.EditorFor(model => item.CategoryEnName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @id = "EnName" } })
+            </td>
+
+            <td>
+                @Html.ActionLink("حذف", "DeleteCategory", new { id = item.Id }, new { @class = "delete  btn btn-danger" })
+            </td>
+        </tr>
+    }
+
+</table>
+
+@section Scripts{
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <script>
+
+        $(function () {
+            /*
+       * add new category
+      */
+            var newcata = $("#newcat");
+            var newCatTextInput = $("#newcatname");
+            var newEnCatTextInput = $("#newEnName");
+            var ajaxText = $("span.ajax-text");
+            var table = $("table#category tbody")
+
+            newCatTextInput.keyup(function (e) {
+                if (e.keyCode == 13) {
+                    newcata.click();
+                }
+            });
+
+            newEnCatTextInput.keyup(function (e) {
+                if (e.keyCode == 13) {
+                    newcata.click();
+                }
+            });
+
+            newcata.click(function (e) {
+                e.preventDefault();
+
+                var catName = newCatTextInput.val();
+                var catEnName = newEnCatTextInput.val();
+                if (catName.length < 2) {
+                    alert("يجب ان تحتوي المجموعة للاسم بالعربي على اكثر من حرفين");
+                    return false
+                }
+                if (catEnName.length < 2) {
+                    alert("يجب ان تحتوي المجموعة للاسم بالانجليزي على اكثر من حرفين");
+                    return false;
+                }
+
+                ajaxText.show();
+
+                var url = "/admin/shop/AddNewCategory";
+                $.post(url, { catName: catName, catEnName: catEnName }, function (data) {
+
+                    var response = data.trim();
+                    if (response == "titleToken") {
+                        ajaxText.html("<span class='alert alert-danger'>اسم المجموعة  موجود سابقا</span>");
+                        setTimeout(function () {
+                            ajaxText.fadeOut("fase", function () {
+                                ajaxText.html("<img src='/Content/img/ajax-loader.gif' />");
+                            });
+                        }, 2000);
+                        return false;
+                    } else {
+                        if (!$("table#category").length) {
+                            location.reload()
+                        }
+                        else {
+                            ajaxText.html("<span class='alert alert-success' > تم اضافة المجموعة بنجاح</span>");
+                            setTimeout(function () {
+                                ajaxText.fadeOut("fase", function () {
+                                    ajaxText.html("<img src='/Content/img/ajax-loader.gif' />");
+                                });
+                            }, 2000);
+
+                            newCatTextInput.val("");
+                            newEnCatTextInput.val("");
+
+                            var toAppend = $("table#category tbody tr:last").clone();
+                            toAppend.attr("id", "id_" + data);
+
+                            toAppend.find("#ArName").val(catName);
+                            toAppend.find("#EnName").val(catEnName);
+                            toAppend.find("a.Delete").attr("href", "/admin/shop/deleteCategory" + data);
+                            table.append(toAppend);
+                        }
+                    }
+                })
+            })
+
+            /*
+             *  Rename catgory
+            */
+
+            var originalTextboxValue;
+            $("table#category input").dblclick(function () {
+                originalTextboxValue = $(this).val();
+                $(this).attr("readonly", false);
+            });
+
+            $("table#category input").keyup(function (e) {
+                if (e.keyCode == 13) {
+                    $(this).blur();
+                }
+
+            });
+            $("table#category input").blur(function () {
+                var $this = $(this);
+                var currentRow = $this.closest("tr");
+                var newCatName = currentRow.find("#ArName").val();
+                var newEnCatName = currentRow.find("#EnName").val();
+                var ajaxdiv = $this.parent().find(".ajaxdivtd");
+                var id = $this.parent().parent().attr("id").substring(3);
+
+                var url = "/admin/shop/RenameCategory";
+
+                if (newCatName.length < 2) {
+                    alert("يجب ان تحتوي المجموعة بالعربي على حرفين على الاقل ");
+                    $this.attr("readonly", true);
+                    return false;
+                }
+                if (newEnCatName.length < 2) {
+                    alert("يجب ان تحتوي المجموعة الانجليزي على حرفين على الاقل ");
+                    $this.attr("readonly", true);
+                    return false;
+                }
+
+                $.post(url, { newCatName: newCatName, newEnCatName: newEnCatName, id: id }, function (data) {
+
+                    var response = data.trim();
+                    if (response == "titletaken") {
+                        $this.val(originalTextboxValue);
+                        ajaxdiv.html("<span class='alert alert-danger'>اسم المجموعة موجود سابقا</span>").show();
+
+                    }
+                    else {
+                        ajaxdiv.html("<span class='alert alert-success'>تم تغيير المجموعة بنجاح</span>").show();
+                    }
+                    setTimeout(function () {
+                        ajaxdiv.fadeOut("fast", function () {
+                            ajaxdiv.html("");
+                        })
+
+                    },2000);
+
+
+                }).done(function () {
+                    $this.attr("readonly", true);
+                });
+
+
+            });
+
+            /*
+             *  ReOrder catgory
+            */
+            $("table#category tbody").sortable({
+                items: "tr:not(.home)",
+                placeholder: "ui-state-highlight",
+                update: function () {
+                    var ids = $("table#category tbody").sortable("serialize");
+                    var url = "/admin/shop/ReOrderCategory";
+
+                    $.post(url, ids, function () {
+
+                    })
+
+                }
+
+            });
+
+            $("a.delete").click(function () {
+                if (!confirm("هل انت متأكد من عملية الحذف")) return false;
+            });
+          
+
+
+
+
+        });
+
+    </script>
+}
+
+
+

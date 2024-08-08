@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title -ادارة الموقع</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        .navbar-collapse.collapse {
+            float: right !important;
+        }
+
+        .container {
+            direction: rtl !important;
+        }
+        table{
+            direction:rtl !important;
+        }
+    </style>
+    <link href="~/Content/bootstrap-rtl.css" rel="stylesheet" />
+</head>
+<body dir="rtl">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <ul><li><a href="/admin/dashboard" class="navbar-brand navbar-right"> لوحة التحكم </a></li></ul>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/admin/Pages/">ادارة الصفحات</a></li>
+                    <li><a href="/admin/Shop/Categories">ادارة المجموعات</a></li>
+                    <li><a href="/admin/Shop/Products">ادارة المنتجات</a></li>
+                    <li><a href="/admin/Pages/EditSidebar">معلومات الشريط الجانبي</a></li>
+
+                </ul>
+                <ul class="navbar-left">
+                    <li><a href="/" class="navbar-brand " target="_blank">THE FIRST SHOPPING</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container body-content" dir="rtl">
+        @RenderBody()
+        <hr />
+        
+    </div>
+
+    @Scripts.Render("~/bundles/scripts")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,9 @@
+﻿@model FirstShopping.Models.ViewModels.Pages.PageVM
+
+@{
+    ViewBag.Title = ViewBag.PageTitle;
+    TempData["PageTitle"] = ViewBag.PageTitle;
+    Layout = "~/Views/Shared/_Basic.cshtml";
+}
+
+@Html.Raw(Model.Body)

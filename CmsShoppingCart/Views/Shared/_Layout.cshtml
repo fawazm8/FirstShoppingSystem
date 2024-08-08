@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html dir="rtl" lang="ar-sa">
+<head dir="rtl">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - تسوق الكتروني</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr") 
+    <style>
+        .navbar-collapse.collapse {
+            float: right !important;
+        }
+        .container {
+            direction: rtl !important;
+        }
+    </style>
+</head>
+<body dir="rtl">
+    <div class="navbar navbar-inverse navbar-fixed-topcancel">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="/" class="navbar-brand">تسوق الكتروني</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    @Html.Action("PagesMenuPartial", "Pages");
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li><a  style="font-size:medium" href="/account/logout">خروج</a></li>
+                    }
+                    else
+                    {
+                        if (ViewBag.Title == "دخول")
+                        {
+                            <li style="font-size:medium" class="active"><a href="/account/login">دخول</a></li>
+                        }
+                        else
+                        {
+                            <li ><a style="font-size:medium" href="/account/login">دخول</a></li>
+                        }
+                    }
+
+                    @if (Request.IsAuthenticated && User.IsInRole("User"))
+                    {
+                        if (ViewBag.Title == "البيانات" || ViewBag.Title == "الطلبات")
+                        {
+                            <li class="active">@Html.Action("UserNavPartial", "Account", new { area = "" })</li>
+                        }
+                        else
+                        {
+                            <li>@Html.Action("UserNavPartial", "Account", new { area = "" })</li>
+                        }
+                    }
+                </ul>
+
+                @if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <ul class="navbar-collapse collapse navbar-right adminarea">
+                        <li style="font-size:medium" >@Html.ActionLink("إدارة الموقع", "Index", "Dashboard", new { area = "Admin" }, new { @class = "mangement" }) </li>
+                    </ul>
+                }
+                else
+                {
+                    if (ViewBag.Title != "تفاصيل سلة المشتريات")
+                    {
+                        <ul class="navbar-collapse collapse navbar-right">
+                            @Html.Action("CartPartial", "Cart")
+                        </ul>
+                    }
+                }
+
+
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        <div class="row">
+            <div class="ajaxbg"><span><img src="~/Content/img/ajax-loader.gif" /></span></div>
+
+            @if (ViewBag.Title != "انشاء حساب" &&
+                ViewBag.Title != "دخول" &&
+                ViewBag.Title != "البيانات" &&
+                ViewBag.Title != "الطلبات"
+                )
+            {
+                <div class="col-xs-12 col-md-2">
+                    @Html.Action("CategoryMenuPartial", "Shop")
+                </div>
+            }
+
+            @if (ViewBag.Title == "البيانات")
+            {
+                <div class="col-xs-12 col-md-2">
+                    <ul>
+                        <li><a href="/account/orders">طلباني</a></li>
+                    </ul>
+                </div>
+            }
+
+            @if (ViewBag.Title == "الطلبات")
+            {
+                <div class="col-xs-12 col-md-2">
+                    <ul>
+                        <li><a href="/account/user-profile">بياناتي</a></li>
+                    </ul>
+                </div>
+            }
+
+            @if (ViewBag.Sidebar == "Yes")
+            {
+                <div class="col-xs-12 col-md-7">
+                    @RenderBody()
+                </div>
+                <div class="col-xs-12 col-md-3">
+                    @Html.Action("SidebarPartial", "Pages")
+                </div>
+            }
+            else
+            {
+                <div class="col-xs-12 col-md-10">
+                    @RenderBody()
+                </div>
+            }
+
+        </div>
+
+        <hr />
+        <footer>
+            <p>برمجة وتصميم فواز المخلافي</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/scripts")
+    @RenderSection("scripts", required: false)
+</body>
+
+</html>

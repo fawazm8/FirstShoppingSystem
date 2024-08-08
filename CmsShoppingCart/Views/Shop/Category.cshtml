@@ -1,0 +1,70 @@
+﻿@model IEnumerable<FirstShopping.Models.ViewModels.Shop.ProductVM>
+
+@{
+    ViewBag.Title = ViewBag.CategoryName;
+    Layout = "~/Views/Shared/_Basic.cshtml";
+}
+
+
+<div class="col-md-12">
+    <div>
+        <ol class="breadcrumb">
+            <li><a href="#">الصفحة الرئيسية</a></li>
+            <li class="active">@ViewBag.CategoryName</li>
+            <li>
+                <span>المتوفر :</span> 
+                <button type="button" class="btn btn-default"><strong>@Model.Count()</strong>  منتجات</button>
+            </li>
+        </ol>
+    </div>
+    <!-- /.div -->
+    <div class="row">
+        <div class="btn-group alg-right-pad"> 
+          
+            @*<div class="btn-group">
+                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+                    ترتيب المنتجات على حسب ... &nbsp;
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="#">السعر الاقل</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">السعر الاعلى</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">اكثر مبيعا</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">اكثر مشاهدة</a></li>
+                </ul>
+            </div>*@
+        </div>
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-md-12">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4 text-center col-sm-6 col-xs-6">
+                    <div class="thumbnail product-box">
+                        <a href="/shop/product-details/@item.Slug">
+                            <img src="/Images/Uploads/Products/@item.Id/Thumbs/@item.ImageName" />
+                        </a>
+                        <div class="caption">
+                            <h3><a href="#">@item.Name </a></h3>
+                            <p>Price : <strong>$@item.Price</strong>  </p>
+                            <p><a href="#">@item.CategoryName </a></p>
+                            <p>@item.Description  </p>
+                            <p><a href="/shop/product-details/@item.Slug" class="btn btn-primary" role="button">تفصيل اكثر </a></p>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+}
+<script src="~/assets/js/jquery-1.10.2.js"></script>
+<!--bootstrap JavaScript file  -->
+<script src="~/assets/js/bootstrap.js"></script>
+<!--Slider JavaScript file  -->
+<script src="~/assets/ItemSlider/js/modernizr.custom.63321.js"></script>

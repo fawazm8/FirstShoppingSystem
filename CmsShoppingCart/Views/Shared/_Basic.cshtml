@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="ar-ye" dir="rtl">
+<head dir="rtl">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>THE FIRST SHOPPING- التسوق الاول</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <!-- Bootstrap core CSS -->
+    <link href="~/assets/css/bootstrap.css" rel="stylesheet">
+    <!-- Fontawesome core CSS -->
+    @*<link href="~/assets/css/font-awesome.min.css" rel="stylesheet" />*@
+    <!--GOOGLE FONT -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <!--Slide Show Css -->
+    <link href="~/assets/ItemSlider/css/main-style.css" rel="stylesheet" />
+    <!-- custom CSS here -->
+    <link href="~/assets/css/style.css" rel="stylesheet" />
+    <link href="~/Content/Custom.css" rel="stylesheet" />
+</head>
+<body dir="rtl">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">روابظ سريعة</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/"><strong>التسوق</strong> الاول</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" dir="rtl">
+
+
+                <ul class="nav navbar-nav">
+                    @Html.Action("PagesMenuPartial", "Pages");
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li><a href="/account/logout">خروج</a></li>
+                    }
+                    else
+                    {
+                        if (ViewBag.Title == "دخول")
+                        {
+                            <li class="active"><a href="/account/login">دخول</a></li>
+                        }
+                        else
+                        {
+                            <li><a href="/account/login">دخول</a></li>
+                        }
+                    }
+
+                    @if (Request.IsAuthenticated && User.IsInRole("User"))
+                    {
+                        if (ViewBag.Title == "البيانات" || ViewBag.Title == "الطلبات")
+                        {
+                            <li class="active">@Html.Action("UserNavPartial", "Account", new { area = "" })</li>
+                        }
+                        else
+                        {
+                            <li>@Html.Action("UserNavPartial", "Account", new { area = "" })</li>
+                        }
+                    }
+                </ul>
+                @if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <ul class="navbar-collapse collapse navbar-right adminarea">
+                        <li>@Html.ActionLink("إدارة الموقع", "Index", "Dashboard", new { area = "Admin" }, new { @class = "mangement" }) </li>
+                    </ul>
+                    <ul class="navbar-collapse collapse navbar-right">
+                        @Html.Action("CartPartial", "Cart")
+                    </ul>
+                }
+                else
+                {
+                    if (ViewBag.Title != "تفاصيل سلة المشتريات")
+                    {
+                        <ul class="navbar-collapse collapse navbar-right">
+                            @Html.Action("CartPartial", "Cart")
+                        </ul>
+                    }
+                }
+
+                @*<form class="navbar-form navbar-right" role="search">
+                        <div class="form-group">
+                            <input type="text" placeholder="ابحث هنا ..." class="form-control">
+                        </div>
+                        &nbsp;
+                        <button type="submit" class="btn btn-primary">البحث</button>
+                    </form>*@
+
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+    <div class="container">
+
+        <!-- /.row -->
+        <div class="row">
+
+            <!-- /.col -->
+
+
+
+
+            <div class="container" dir="rtl">
+
+                <!-- /.row -->
+
+                <div class="row" >
+
+                    <div class="col-md-10" dir="rtl">
+                        @RenderBody()
+                    </div>
+                    <!-- /.col -->
+                    <!-- /.col -->
+                    <div class="col-md-2">
+                        @Html.Action("CategoryMenuPartial", "Shop")
+                    </div>
+                </div>
+
+                <!-- /.row -->
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <!-- /.container -->
+    <!--Footer -->
+    <!-- /.col -->
+    <footer>
+        <div class="col-md-12 end-box " >
+            2018  الحقوق محفوظه.... برمجة وتصميم  فواز المخلافي
+        </div> 
+    </footer>
+   
+    <!-- /.col -->
+    <!--Footer end -->
+    <!--Core JavaScript file  -->
+    <script src="~/assets/js/jquery-1.10.2.js"></script>
+    <!--bootstrap JavaScript file  -->
+    <script src="~/assets/js/bootstrap.js"></script>
+    <!--Slider JavaScript file  -->
+    <script src="~/assets/ItemSlider/js/modernizr.custom.63321.js"></script>
+    <script>
+        $.ajax({
+            url: '/controller/action',
+            type: 'GET',
+            cache: false,
+            success: function (result) {
+
+            }
+        });
+    </script>
+
+    @Scripts.Render("~/bundles/scripts")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,17 @@
+﻿@model IEnumerable<FirstShopping.Models.ViewModels.Shop.CategoryVM>
+<div>
+    <a href="#" class="list-group-item active">
+        المجموعات
+    </a>
+    <ul class="list-group">
+        @foreach (var item in Model)
+        {
+            <li class="list-group-item">
+                <a href="/shop/category/@item.Slug.ToLower()">
+                    @item.Name
+                 </a>
+            </li>
+        }
+
+    </ul>
+</div>

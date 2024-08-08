@@ -1,0 +1,137 @@
+﻿@model IEnumerable<FirstShopping.Models.ViewModels.Shop.ProductVM>
+
+@using PagedList.Mvc;
+@using PagedList;
+
+@{
+    ViewBag.Title = "Products";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>ادارة المنتجات</h2>
+
+<p>
+    @Html.ActionLink("اضافة منتج جديد", "AddProduct", "", new { @class = "addLink" })
+</p>
+<table class="searchTable">
+    <tr>
+        <td>
+            البحث بواسطة
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <select id="selectdCategory" name="selectedCategory">
+                <option value="0">اختر المجموعة </option>
+                @foreach (var item in ViewBag.Categories)
+                {
+                    if (ViewBag.SelectedCat == item.Value)
+                    {
+                        <option selected value="@item.Value">@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+
+                }
+            </select>
+        </td>
+    </tr>
+
+</table>
+<table class="table" id="product">
+    <tr class="home">
+        <th>
+            صورة المنتج
+        </th>
+        <th>
+            الاسم بالعربي
+        </th>
+        <th>
+            الاسم بالابجليزي
+        </th>
+        <th>
+            وصف المنتج
+        </th>
+        <th>
+            سعر المنتج
+        </th>
+
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in ViewBag.OnePageOfProducts)
+    {
+        <tr id="id_@item.id">
+            <td>
+                <a href="~/Admin/Shop/EditProduct/@item.id">
+                    <img src="~/Images/Uploads/Products/@item.id/Thumbs/@item.ImageName" />
+                </a>
+            </td>
+            <td>
+                @item.ProductArName
+            </td>
+            <td>
+                @item.ProductEnName
+            </td>
+            <td>
+                @Html.Raw(item.Description)
+            </td>
+            <td>
+                $@item.Price
+            </td>
+
+
+            <td>
+                @Html.ActionLink("تعديل", "EditProduct", new { id = item.id }) |
+                @Html.ActionLink("حذف المنتج", "DeleteProduct", new { id = item.id })
+            </td>
+        </tr>
+    }
+
+</table>
+@Html.PagedListPager((IPagedList)ViewBag.OnePageOfProducts, page => Url.Action("Products", new { page, CatId = ViewBag.SelectedCat }))
+
+@section Scripts{
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <script>
+        $(function () {
+            $('#selectdCategory').on("change", function () {
+
+                var catid = $(this).val();
+                if (catid) {
+                    window.location = "/admin/shop/Products?CatId=" + catid;
+                }
+                return false;
+
+            });
+
+            $("table#product tbody").sortable({
+                items: "tr:not(.home)",
+                placeholder: "ui-state-highlight",
+                update: function () {
+                    var ids = [];
+                    $("table#product tbody tr").each(function () {
+                        var id = $(this).attr("id");
+                        if (id && id.startsWith("id_")) {
+                            id = id.split('_')[1];
+                            ids.push(id);
+                        }
+                    });
+                    var url = "/admin/Shop/ReOrderProduct";
+                    $.post(url, { id: ids }, function (response) {
+                        console.log("Response:", response); // Debugging line
+                    });
+                }
+
+            });
+
+        });
+
+
+    </script>
+
+
+}

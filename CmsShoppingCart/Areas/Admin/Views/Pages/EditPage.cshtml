@@ -1,0 +1,82 @@
+﻿@model FirstShopping.Models.ViewModels.Pages.PageVM
+
+@{
+    ViewBag.Title = "EditPages";
+
+}
+
+
+
+@using (Html.BeginForm())
+{
+    <br />
+    <br />
+    @Html.HiddenFor(Model =>Model.PageId)
+    @Html.AntiForgeryToken();
+
+    <div class="form-horizontal">
+        <h4> تعديل الصفحة</h4>
+        <hr />
+        @if (TempData["ms"] != null)
+        {  
+    <div class="alert alert-success">
+        @TempData["ms"]
+    </div>
+        
+        }
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PageArName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PageArName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PageArName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PageEnName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PageEnName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PageEnName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PageDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.PageDescription, new { @class = "form-control", @id = "PageDescription" })
+                @Html.ValidationMessageFor(model => model.PageDescription, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PageHasSideBar, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.PageHasSideBar)
+                    @Html.ValidationMessageFor(model => model.PageHasSideBar, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("رجوع", "Index")
+</div>
+
+
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace("PageDescription");
+</script>
+

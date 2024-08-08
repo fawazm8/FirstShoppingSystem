@@ -1,0 +1,54 @@
+﻿@model FirstShopping.Models.ViewModels.Pages.PageVM
+
+@{
+    ViewBag.Title = "تفاصيل الصفحة";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>تفاصيل الصفحة </h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+       
+       
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PageArName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PageArName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PageEnName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PageEnName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PageDescription)
+        </dt>
+
+        <dd>
+            @Html.Raw(Model.PageDescription)
+        </dd>
+      
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PageHasSideBar)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PageHasSideBar)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink(" تعديل", "Edit", new {  id = Model.PageId }) |
+    @Html.ActionLink("رجوع", "Index")
+</p>

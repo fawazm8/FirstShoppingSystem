@@ -1,0 +1,7 @@
+﻿@model FirstShopping.Models.ViewModels.Cart.CartVM
+
+<div class="ajaxcart" style="color:white;">
+    مشترياتك عددها: @Model.Quantity بقيمة - @Model.Price
+    <br />
+    @Html.ActionLink("فحص سلة المشتريات", "Index")
+</div>
