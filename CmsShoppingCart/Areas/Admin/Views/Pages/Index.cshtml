@@ -31,6 +31,7 @@ else
             <th></th>
         </tr>
 
+
         @foreach (var item in Model)
         {
             <tr id="id_@item.PageId" class="@item.PageEnName" >
@@ -73,7 +74,6 @@ else
                     var url = "/admin/Pages/ReOrderPages";
                     $.post(url, ids, function (data) { });
                 }
-
 
             });
         });
