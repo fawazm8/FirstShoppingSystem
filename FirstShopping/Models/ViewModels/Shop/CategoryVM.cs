@@ -19,6 +19,7 @@ namespace FirstShopping.Models.ViewModels.Shop
             CategoryArName = row.CategoryArName;
             CategoryEnName = row.CategoryEnName;
             CategorySorting = row.CategorySorting;
+            ImageName = row.ImageName;
         }
         public int Id { get; set; }
         [Display(Name = "اسم المجموعة بالعربي")]
@@ -26,5 +27,7 @@ namespace FirstShopping.Models.ViewModels.Shop
         [Display(Name = "اسم المجموعة بالانجليزي")]
         public string CategoryEnName { get; set; }
         public int CategorySorting { get; set; }
+
+        public string ImageName { get; set; }
     }
 }

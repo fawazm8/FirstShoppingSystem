@@ -1,0 +1,333 @@
+﻿@model IEnumerable<FirstShopping.Models.ViewModels.Shop.CategoryVM>
+
+@{
+    ViewBag.Title = "ادارة المجموعات";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>نموذج ادارة المجموعات</h2>
+<div class="new-cat">
+    <table class="table table">
+        <tr>
+            <td width="200">اسم المجموعة بالعربي </td>
+            <td><input type="text" id="newcatname" /></td>
+        </tr>
+        <tr>
+            <td>اسم المجموعة بالانجليزي</td>
+            <td><input type="text" id="newEnName" /></td>
+        </tr>
+        <tr>
+            <td>صورة المجموعة</td>
+            <td><input type="file" id="newCatImage" /></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <a href="#" id="newcat" class="btn btn-success">اضافة مجموعة جديدة </a>
+                <span class="ajax-text">
+                    <img src="~/Content/img/ajax-loader.gif" />
+                </span>
+            </td>
+
+        </tr>
+    </table>
+
+</div>
+
+<table class="table" id="category">
+    <tr class="home">
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryArName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryEnName)
+        </th>
+        <th>صورة المجموعة</th>
+        <th>الإجراءات</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr id="id_@item.Id">
+            <td>
+                <div class="ajaxdivtd"></div>
+                @Html.EditorFor(model => item.CategoryArName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @id = "ArName" } })
+            </td>
+            <td>
+                <div class="ajaxdivtd"></div>
+                @Html.EditorFor(model => item.CategoryEnName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @id = "EnName" } })
+            </td>
+            <td>
+                <img src="~/Images/Uploads/Categories/@item.Id/@item.ImageName" width="50" height="50" class="category-image" />
+            </td>
+
+            <td>
+                <a href="#" class="btn btn-danger delete-category" data-id="@item.Id">حذف</a>
+            </td>
+        </tr>
+    }
+
+</table>
+
+@section Scripts{
+    <!-- تضمين مكتبة jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- تضمين مكتبة jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+
+    <!-- تضمين مكتبة SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <script>
+        var allowedExtensions = ["jpg", "jpeg", "png", "gif"];
+
+        function validateImage(fileInput) {
+            var filePath = fileInput.value;
+            var extension = filePath.split('.').pop().toLowerCase();
+            if ($.inArray(extension, allowedExtensions) == -1) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'الرجاء اختيار صورة بامتداد صحيح (jpg, jpeg, png, gif)',
+                });
+                fileInput.value = "";  // Clear the file input
+                return false;
+            }
+            return true;
+        }
+
+        $(function () {
+
+           
+            /*
+       * add new category
+      */
+            var newcata = $("#newcat");
+            var newCatTextInput = $("#newcatname");
+            var newEnCatTextInput = $("#newEnName");
+            var ajaxText = $("span.ajax-text");
+            var table = $("table#category tbody")
+
+            newCatTextInput.keyup(function (e) {
+                if (e.keyCode == 13) {
+                    newcata.click();
+                }
+            });
+
+            newEnCatTextInput.keyup(function (e) {
+                if (e.keyCode == 13) {
+                    newcata.click();
+                }
+            });
+
+            newcata.click(function (e) {
+                e.preventDefault();
+
+                var catName = newCatTextInput.val();
+                var catEnName = newEnCatTextInput.val();
+                var catImage = document.getElementById('newCatImage').files[0];
+
+
+
+                if (catName.length < 2) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'تنبيه',
+                        text: 'يجب أن يحتوي الاسم بالعربي على أكثر من حرفين',
+                    });
+                    return false
+                }
+                if (catEnName.length < 2) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'تنبيه',
+                        text: 'يجب أن يحتوي الاسم بالإنجليزية على أكثر من حرفين',
+                    });
+                    return false;
+                }
+                if (!catImage) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطأ',
+                        text: 'يجب اختيار صورة للمجموعة',
+                    });
+                    return false;  // إيقاف العملية إذا لم يتم اختيار صورة
+                }
+                if (!validateImage(document.getElementById('newCatImage'))) {
+                    return false;  // إذا كان امتداد الصورة خاطئ، يتم إيقاف العملية
+                }
+
+                var formData = new FormData();
+                formData.append("catName", catName);
+                formData.append("catEnName", catEnName);
+                formData.append("catImage", catImage);
+
+                ajaxText.show();
+
+                // هنا تستمر عملية الإضافة بشكل طبيعي بعد التحقق
+                $.ajax({
+                    url: "/admin/shop/AddNewCategory",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        var response = data.trim();
+                        if (response == "titleToken") {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطأ',
+                                text: 'اسم المجموعة موجود بالفعل!',
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'تمت الإضافة',
+                                text: 'تمت إضافة المجموعة بنجاح',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+
+                            newCatTextInput.val("");
+                            newEnCatTextInput.val("");
+                            $("#newCatImage").val("");
+
+                            var newRow = `
+                        <tr id="id_${response}" class="category-row">
+                            <td class="category-ar-name">${catName}</td>
+                            <td class="category-en-name">${catEnName}</td>
+                            <td><img src="/Images/Uploads/Categories/${response}/${catImage.name}" width="50" height="50" /></td>
+                            <td>
+                                <a href="#" class="btn btn-danger delete-category" data-id="${response}">حذف</a>
+                            </td>
+                        </tr>
+                        <tr id="edit_${response}" class="edit-row" style="display:none;">
+                            <td>
+                                <input type="text" class="form-control edit-ar-name" value="${catName}" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control edit-en-name" value="${catEnName}" />
+                            </td>
+                            <td>
+                                <input type="file" class="form-control edit-cat-image" data-id="${response}" />
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-success save-edit" data-id="${response}">حفظ</a>
+                                <a href="#" class="btn btn-secondary cancel-edit" data-id="${response}">إلغاء</a>
+                            </td>
+                        </tr>`;
+
+                            $("table#category tbody").append(newRow);
+                        }
+                    },
+                    complete: function () {
+                        ajaxText.hide();
+                        newcata.text("اضافة مجموعة جديدة").prop("disabled", false);
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: 'حدث خطأ أثناء عملية الإضافة.',
+                        });
+                    }
+                });
+            });
+            
+
+            /*
+             *  Rename catgory
+            */
+
+            var originalTextboxValue;
+            $("table#category input").dblclick(function () {
+                originalTextboxValue = $(this).val();
+                $(this).attr("readonly", false);
+            });
+
+            $("table#category input").keyup(function (e) {
+                if (e.keyCode == 13) {
+                    $(this).blur();
+                }
+
+            });
+            $("table#category input").blur(function () {
+                var $this = $(this);
+                var currentRow = $this.closest("tr");
+                var newCatName = currentRow.find("#ArName").val();
+                var newEnCatName = currentRow.find("#EnName").val();
+                var ajaxdiv = $this.parent().find(".ajaxdivtd");
+                var id = $this.parent().parent().attr("id").substring(3);
+
+                var url = "/admin/shop/RenameCategory";
+
+                if (newCatName.length < 2) {
+                    alert("يجب ان تحتوي المجموعة بالعربي على حرفين على الاقل ");
+                    $this.attr("readonly", true);
+                    return false;
+                }
+                if (newEnCatName.length < 2) {
+                    alert("يجب ان تحتوي المجموعة الانجليزي على حرفين على الاقل ");
+                    $this.attr("readonly", true);
+                    return false;
+                }
+
+                $.post(url, { newCatName: newCatName, newEnCatName: newEnCatName, id: id }, function (data) {
+
+                    var response = data.trim();
+                    if (response == "titletaken") {
+                        $this.val(originalTextboxValue);
+                        ajaxdiv.html("<span class='alert alert-danger'>اسم المجموعة موجود سابقا</span>").show();
+
+                    }
+                    else {
+                        ajaxdiv.html("<span class='alert alert-success'>تم تغيير المجموعة بنجاح</span>").show();
+                    }
+                    setTimeout(function () {
+                        ajaxdiv.fadeOut("fast", function () {
+                            ajaxdiv.html("");
+                        })
+
+                    }, 2000);
+
+
+                }).done(function () {
+                    $this.attr("readonly", true);
+                });
+
+
+            });
+
+            /*
+             *  ReOrder catgory
+            */
+            $("table#category tbody").sortable({
+                items: "tr:not(.home)",
+                placeholder: "ui-state-highlight",
+                update: function () {
+                    var ids = $("table#category tbody").sortable("serialize");
+                    var url = "/admin/shop/ReOrderCategory";
+
+                    $.post(url, ids, function () {
+
+                    })
+
+                }
+
+            });
+
+            $("a.delete").click(function () {
+                if (!confirm("هل انت متأكد من عملية الحذف")) return false;
+            });
+
+
+
+
+
+        });
+
+    </script>
+}
+
+
+

@@ -28,14 +28,14 @@ namespace FirstShopping.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public string AddNewCategory(string catName, string catEnName)
+        public string AddNewCategory(string catName, string catEnName, HttpPostedFileBase catImage)
         {
             string id;
             using (Db db = new Db())
             {
                 if (db.Category.Any(x => x.CategoryArName == catName))
                     return "titleToken";
-                if (db.Category.Any(x => x.CategoryEnName == catName))
+                if (db.Category.Any(x => x.CategoryEnName == catEnName))
                     return "titleToken";
 
                 CategoryDTO dto = new CategoryDTO
@@ -50,6 +50,45 @@ namespace FirstShopping.Areas.Admin.Controllers
 
                 id = dto.Id.ToString();
             }
+
+            #region Upload Image
+
+            if (catImage != null && catImage.ContentLength > 0)
+            {
+                string ext = catImage.ContentType.ToLower();
+                if (ext != "image/jpg" &&
+                ext != "image/jpeg" &&
+                ext != "image/pjpeg" &&
+                ext != "image/gif" &&
+                ext != "image/x-png" &&
+                ext != "image/png")
+                {
+                    return "InvalidImageFormat";
+                }
+
+                var originalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
+                var pathString1 = Path.Combine(originalDirectory.ToString(), "Categories");
+                var pathString2 = Path.Combine(originalDirectory.ToString(), "Categories\\" + id.ToString());
+
+                if (!Directory.Exists(pathString1))
+                    Directory.CreateDirectory(pathString1);
+                if (!Directory.Exists(pathString2))
+                    Directory.CreateDirectory(pathString2);
+
+                string imageName = catImage.FileName;
+                var path = string.Format("{0}\\{1}", pathString2, imageName);
+
+                catImage.SaveAs(path);
+
+                using (Db db = new Db())
+                {
+                    var dto = db.Category.Find(int.Parse(id));
+                    dto.ImageName = imageName;
+                    db.SaveChanges();
+                }
+            }
+
+            #endregion
 
             return id;
         }

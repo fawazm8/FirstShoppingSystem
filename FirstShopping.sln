@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstShopping", "CmsShoppingCart\FirstShopping.csproj", "{AE7C75A3-7301-4830-8016-E9A55857F67D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstShopping", "FirstShopping\FirstShopping.csproj", "{AE7C75A3-7301-4830-8016-E9A55857F67D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

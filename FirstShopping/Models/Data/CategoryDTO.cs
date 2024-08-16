@@ -15,5 +15,7 @@ namespace FirstShopping.Models.Data
         public string CategoryArName { get; set; }
         public string CategoryEnName { get; set; }
         public int CategorySorting { get; set; }
+
+        public string ImageName { get; set; }
     }
 }
